@@ -6,6 +6,7 @@
 
 > 🌐 **Live AWS EC2 Deployment**: [http://67.202.41.44](http://67.202.41.44)  
 > 📖 **Comprehensive FDE Defense Guide & System Architecture**: [`docs/INTERVIEW_GUIDE.md`](./docs/INTERVIEW_GUIDE.md)  
+> 🤖 **AI Tools Usage & Engineering Attribution Report**: [`docs/AI_ATTRIBUTION_REPORT.md`](./docs/AI_ATTRIBUTION_REPORT.md)  
 > ⚡ **Interactive OpenAPI / Swagger Documentation**: [http://67.202.41.44:8000/docs](http://67.202.41.44:8000/docs)
 
 ---
@@ -286,5 +287,6 @@ nohup npm run dev > frontend.log 2>&1 &
 
 ## 10. AI Tool Attribution
 
-In accordance with the assignment instructions:
-* AI assistance (Google DeepMind Antigravity) was used during this take-home to assist in drafting architectural specifications, structuring edge-case unit test fixtures, and accelerating frontend component styling. All business logic, database constraints, calculations, and code implementations were reviewed and verified for production correctness.
+In accordance with the assignment instructions, AI tools were permitted:
+* **Detailed Attribution Report**: Please see [`docs/AI_ATTRIBUTION_REPORT.md`](./docs/AI_ATTRIBUTION_REPORT.md) for a comprehensive breakdown of architectural decisions, database modeling, and where AI was guided and corrected.
+* **Summary**: Google DeepMind Antigravity CLI was used as an interactive pair-programming accelerator for drafting boilerplate, tests, and UI scaffolding. All core architecture (Docker MySQL setup, integer cents precision, dual-key orphan isolation, separation of concerns, and live AWS deployment) was directed, implemented, and verified by **Nakul Kothlapur**.
