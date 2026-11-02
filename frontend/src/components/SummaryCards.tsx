@@ -18,6 +18,7 @@ interface Props {
   summary: ReconciliationSummary;
   onFilterStatus?: (status: string) => void;
   onFilterFlag?: (flag: string) => void;
+  onNavigateUnmatched?: () => void;
 }
 
 interface KpiCardItemProps {
@@ -68,7 +69,7 @@ const KpiCardItem: React.FC<KpiCardItemProps> = ({
   </div>
 );
 
-export const SummaryCards: React.FC<Props> = ({ summary, onFilterStatus, onFilterFlag }) => {
+export const SummaryCards: React.FC<Props> = ({ summary, onFilterStatus, onFilterFlag, onNavigateUnmatched }) => {
   const uncollectedCash =
     summary.uncollected_cash_cents ??
     Math.max(0, summary.total_billed_cents - summary.matched_paid_cents);
@@ -208,6 +209,8 @@ export const SummaryCards: React.FC<Props> = ({ summary, onFilterStatus, onFilte
           subtext={`${summary.unmatched_remittance_count} orphaned remittance (e.g. C9999)`}
           labelColor="#d97706"
           valueColor="#d97706"
+          onClick={onNavigateUnmatched}
+          title="Click to view Unmatched Remittances Queue"
         />
 
         <KpiCardItem

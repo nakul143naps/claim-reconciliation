@@ -143,6 +143,11 @@ export const App: React.FC = () => {
     scrollToClaims();
   };
 
+  const handleKpiUnmatchedClick = () => {
+    setActiveTab('unmatched');
+    scrollToClaims();
+  };
+
   const handleImportSuccess = () => {
     loadSummaryData();
     loadClaimsData();
@@ -241,6 +246,7 @@ export const App: React.FC = () => {
               summary={summary}
               onFilterStatus={handleKpiStatusClick}
               onFilterFlag={handleKpiFlagClick}
+              onNavigateUnmatched={handleKpiUnmatchedClick}
             />
           )}
         </section>
