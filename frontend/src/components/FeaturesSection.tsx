@@ -54,7 +54,7 @@ export const FeaturesSection: React.FC = () => {
           Engineered for Healthcare Revenue Cycle Integrity
         </h2>
         <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', marginTop: '0.5rem', lineHeight: 1.6 }}>
-          Standard accounting software cannot handle the complexity of healthcare remittances. Stitch Fin provides a purpose-built settlement engine that eliminates billing blindspots.
+          Standard accounting software cannot handle the complexity of healthcare remittances. Claims Reconciliation System provides a purpose-built settlement engine that eliminates billing blindspots.
         </p>
       </div>
 

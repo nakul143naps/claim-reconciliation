@@ -125,7 +125,7 @@ No public upload API in v1; use controlled import script.
 - **Next exact task:** Complete frontend enhancements and interview readiness.
 
 ### 2026-10-29 — Production B2B SaaS Elevation & Enterprise Workflows Complete
-- **Requested task:** Elevate the frontend platform taking inspiration from leading healthtech/fintech sites (ClaimBook, PayerVista, RevSync Health, PayerWorks) with genuine Stitch Fin content. Add features section, how it works section, interactive Request Demo lead capture popup, Sign In authentication modal, audit CSV export, and clean up internal text to make it production-ready.
+- **Requested task:** Elevate the frontend platform taking inspiration from leading healthtech/fintech sites (ClaimBook, PayerVista, RevSync Health, PayerWorks) with genuine Claims Reconciliation System content. Add features section, how it works section, interactive Request Demo lead capture popup, Sign In authentication modal, audit CSV export, and clean up internal text to make it production-ready.
 - **Files changed:**
   - `frontend/src/components/Navbar.tsx`
   - `frontend/src/components/HeroSection.tsx`
@@ -151,7 +151,7 @@ No public upload API in v1; use controlled import script.
 - **Known issues / blockers:** None. Project is 100% complete, tested, and production-ready.
 
 ### 2026-10-30 to 2026-10-31 — Readability & Simplicity Refactoring (Interview Defense Optimization)
-- **Requested task:** Refactor codebase for maximal readability and architectural simplicity so that candidate Nakul Kothlapur can comfortably explain every component and service in an interview at Stitch Fin. Standard patterns only (no clever abstractions, no visual alterations, zero API breaking changes). Keep AWS deployment isolated and do all work locally on `refactor/readability`. Ensure all Git commits are authored strictly by `Nakul Kothlapur <nakulnaps095@gmail.com>`.
+- **Requested task:** Refactor codebase for maximal readability and architectural simplicity so that candidate Nakul Kothlapur can comfortably explain every component and service in a Forward Deployed Engineer technical defense. Standard patterns only (no clever abstractions, no visual alterations, zero API breaking changes). Keep AWS deployment isolated and do all work locally on `refactor/readability`. Ensure all Git commits are authored strictly by `Nakul Kothlapur <nakulnaps095@gmail.com>`.
 - **Milestones Completed:**
   - **Emergency Backups**: Created `emergrncy_backup.zip` (708 KB) and uncompressed backup folder on Desktop.
   - **Pre-Refactor Checkpoint**: Tagged `pre-refactor` at `e100e76`, captured `checkpoint/openapi_before.json` (32,989 bytes, 10 endpoints), and dumped `checkpoint/db_backup.sql`.

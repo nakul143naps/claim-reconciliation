@@ -31,7 +31,7 @@ RECOMMENDED CLINICAL APPEAL PROTOCOL:
 • Verify provider NPI, taxonomy coordinates, and prior authorization logs.
 • Submit via electronic clearinghouse portal within standard timely filing limits.
 =====================================================
-Generated via Stitch Fin Claim Reconciliation Engine`;
+Generated via Claims Reconciliation Engine`;
 
     navigator.clipboard.writeText(brief);
     setCopied(true);

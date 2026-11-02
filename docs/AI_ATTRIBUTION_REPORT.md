@@ -1,9 +1,9 @@
 # AI Tools Usage & Engineering Attribution Report
 
 > **Candidate**: Nakul Kothlapur  
-> **Role**: Forward Deployed Engineer (FDE) — Stitch Fin  
+> **Role**: Forward Deployed Engineer (FDE)  
 > **Project**: Enterprise Healthcare Claim Reconciliation Engine  
-> **Live Production AWS Demo**: [http://67.202.41.44](http://67.202.41.44)  
+> **Live Production Demo**: [https://claim-reconciliation.duckdns.org/](https://claim-reconciliation.duckdns.org/)  
 > **GitHub Repository**: [https://github.com/nakul143naps/claim-reconciliation](https://github.com/nakul143naps/claim-reconciliation)  
 
 ---

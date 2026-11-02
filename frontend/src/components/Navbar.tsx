@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layers, Calendar, UserCheck } from 'lucide-react';
+import { Layers, UserCheck } from 'lucide-react';
 
 interface Props {
   onRequestDemo: () => void;

@@ -39,7 +39,7 @@ export const RequestDemoModal: React.FC<Props> = ({ isOpen, onClose }) => {
               Schedule a Custom Product Demo
             </h2>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-              See how Stitch Fin uncovers uncollected revenue and automates 3-way reconciliation.
+              See how Claims Reconciliation System uncovers uncollected revenue and automates 3-way reconciliation.
             </p>
           </div>
           <button className="modal-close" onClick={handleReset} aria-label="Close modal">
@@ -70,7 +70,7 @@ export const RequestDemoModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 Thank You, {formData.fullName.split(' ')[0] || 'Partner'}!
               </h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '420px', margin: '0 auto 1.5rem auto', lineHeight: 1.5 }}>
-                We received your request for <strong>{formData.organization || 'your clinic'}</strong>. A Stitch Fin Solutions Architect will reach out to <strong>{formData.workEmail}</strong> within 24 business hours with your sandbox demo coordinates.
+                We received your request for <strong>{formData.organization || 'your clinic'}</strong>. A Solutions Architect will reach out to <strong>{formData.workEmail}</strong> within 24 business hours with your sandbox demo coordinates.
               </p>
               <button className="btn btn-primary" onClick={handleReset} style={{ margin: '0 auto' }}>
                 Return to Platform

@@ -15,7 +15,7 @@ export const SignInModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => 
   if (!isOpen) return null;
 
   const handleDemoFill = () => {
-    setEmail('billing.operations@stitchfin.com');
+    setEmail('billing.operations@claimreconcile.org');
     setPassword('DemoSession2026!');
   };
 
@@ -25,7 +25,7 @@ export const SignInModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => 
 
     setTimeout(() => {
       setIsLoading(false);
-      onSuccess(email || 'billing.operations@stitchfin.com');
+      onSuccess(email || 'billing.operations@claimreconcile.org');
       onClose();
     }, 600);
   };
@@ -80,3 +80,65 @@ export const SignInModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => 
                 <Lock size={15} style={{ position: 'absolute', left: '10px', color: '#94a3b8' }} />
                 <input
                   required
+                  type="password"
+                  className="input-field"
+                  style={{ paddingLeft: '32px', width: '100%' }}
+                  placeholder="••••••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: '#64748b', cursor: 'pointer' }}>
+                <input type="checkbox" defaultChecked style={{ accentColor: 'var(--primary)' }} />
+                Remember this workstation (30 days)
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={isLoading}
+              style={{ width: '100%', justifyContent: 'center', padding: '0.65rem' }}
+            >
+              {isLoading ? (
+                <span>Authenticating...</span>
+              ) : (
+                <>
+                  <span>Sign In to Workspace</span>
+                  <ArrowRight size={14} />
+                </>
+              )}
+            </button>
+
+            {/* Quick Demo Fill Helper */}
+            <div style={{ textAlign: 'center', paddingTop: '0.5rem', borderTop: '1px solid #f1f5f9' }}>
+              <button
+                type="button"
+                onClick={handleDemoFill}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--primary)',
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                }}
+              >
+                Autofill Demo Specialist Account
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.25rem' }}>
+              <ShieldCheck size={14} style={{ color: 'var(--success)' }} />
+              <span>SOC-2 Type II Certified & HIPAA Compliant Session</span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};

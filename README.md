@@ -1,13 +1,13 @@
-Claim Reconciliation Engine
+# Claims Reconciliation System
 
-[![Live Demo on AWS](https://img.shields.io/badge/Live_Demo-AWS_EC2_Deployed-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](http://67.202.41.44)
+[![Live Demo on AWS](https://img.shields.io/badge/Live_Demo-HTTPS_Production-0284c7?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://claim-reconciliation.duckdns.org/)
 [![Tests Passing](https://img.shields.io/badge/Tests-38%2F38_Passing-10b981?style=for-the-badge&logo=pytest)](https://github.com/nakul143naps/claim-reconciliation)
 [![MySQL 8.0](https://img.shields.io/badge/Database-MySQL_8.0_Docker-f59e0b?style=for-the-badge&logo=mysql)](https://github.com/nakul143naps/claim-reconciliation)
 
-> 🌐 **Live AWS EC2 Deployment**: [http://67.202.41.44](http://67.202.41.44)  
+> 🌐 **Live AWS EC2 Deployment**: [https://claim-reconciliation.duckdns.org/](https://claim-reconciliation.duckdns.org/)  
 > 📖 **Comprehensive FDE Defense Guide & System Architecture**: [`docs/INTERVIEW_GUIDE.md`](./docs/INTERVIEW_GUIDE.md)  
 > 🤖 **AI Tools Usage & Engineering Attribution Report**: [`docs/AI_ATTRIBUTION_REPORT.md`](./docs/AI_ATTRIBUTION_REPORT.md)  
-> ⚡ **Interactive OpenAPI / Swagger Documentation**: [http://67.202.41.44:8000/docs](http://67.202.41.44:8000/docs)
+> ⚡ **Interactive OpenAPI / Swagger Documentation**: [https://claim-reconciliation.duckdns.org/docs](https://claim-reconciliation.duckdns.org/docs)
 
 ---
 
@@ -219,7 +219,7 @@ pytest -v
 ## 8. AWS Cloud Deployment Architecture
 
 The platform is deployed live on **Amazon Web Services (AWS)** at:  
-👉 **[http://67.202.41.44:3000](http://67.202.41.44:3000)**
+👉 **[https://claim-reconciliation.duckdns.org/:3000](https://claim-reconciliation.duckdns.org/:3000)**
 
 ### 8.1 Cloud Infrastructure Specifications
 * **Cloud Provider**: Amazon Web Services (AWS)

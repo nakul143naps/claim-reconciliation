@@ -1,10 +1,10 @@
-# Stitch Financial — Forward Deployed Engineer (FDE) Comprehensive Defense & Architecture Guide
+# Forward Deployed Engineer (FDE) Comprehensive Defense & Architecture Guide — Claims Reconciliation System
 
 > **Candidate**: Nakul Kothlapur  
 > **Role**: Forward Deployed Engineer (FDE)  
-> **Company**: Stitch Fin  
+> **Platform**: Claims Reconciliation System  
 > **Project**: Enterprise Healthcare Claim Reconciliation Engine  
-> **Live Production AWS URL**: [http://67.202.41.44](http://67.202.41.44)  
+> **Live Production URL**: [https://claim-reconciliation.duckdns.org/](https://claim-reconciliation.duckdns.org/)  
 > **GitHub Repository**: [https://github.com/nakul143naps/claim-reconciliation](https://github.com/nakul143naps/claim-reconciliation)  
 
 ---
