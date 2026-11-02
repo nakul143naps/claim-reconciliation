@@ -20,7 +20,7 @@ export const HeroSection: React.FC<Props> = ({ onScrollToLedger, onRequestDemo }
       </h1>
 
       <p className="hero-subheading">
-        Stitch Fin delivers complete financial transparency between submitted charges and payer cash remittances. Eliminate manual Excel reconciliation, catch underpayments instantly, and retain complete denial audit trails without rounding errors.
+        Claims Reconciliation System delivers complete financial transparency between submitted charges and payer cash remittances. Eliminate manual Excel reconciliation, catch underpayments instantly, and retain complete denial audit trails without rounding errors.
       </p>
 
       {/* Feature Pills */}
