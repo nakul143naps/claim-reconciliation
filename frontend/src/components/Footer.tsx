@@ -15,7 +15,7 @@ export const Footer: React.FC<Props> = ({ onRequestDemo, onOpenSignIn }) => {
             <div className="logo-badge" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}>
               <Layers size={15} />
             </div>
-            <span style={{ fontSize: '1.15rem', fontWeight: 800, letterSpacing: '-0.5px' }}>STITCH FIN</span>
+            <span style={{ fontSize: '1.15rem', fontWeight: 800, letterSpacing: '-0.5px' }}>Claims Reconciliation System</span>
           </div>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.6, maxWidth: '320px' }}>
             Enterprise claim reconciliation and revenue integrity platform built for healthcare practices, surgery centers, and clinical billing networks.
@@ -84,7 +84,7 @@ export const Footer: React.FC<Props> = ({ onRequestDemo, onOpenSignIn }) => {
 
       <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
         <div>
-          © {new Date().getFullYear()} Stitch Financial Inc. All rights reserved.
+          © {new Date().getFullYear()} Claims Reconciliation System. All rights reserved.
         </div>
         <div style={{ display: 'flex', gap: '1.5rem' }}>
           <span>Privacy Policy</span>

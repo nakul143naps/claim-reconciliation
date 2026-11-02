@@ -1,6 +1,3 @@
-import React from 'react';
-import { UploadCloud, Cpu, CheckCircle } from 'lucide-react';
-
 export const HowItWorksSection: React.FC = () => {
   const steps = [
     {
@@ -27,7 +24,7 @@ export const HowItWorksSection: React.FC = () => {
     <section id="how-it-works" style={{ margin: '4rem 0 3rem 0', background: '#ffffff', border: '1px solid var(--neutral-border)', borderRadius: '12px', padding: '3rem 2rem' }}>
       <div style={{ textAlign: 'center', maxWidth: '680px', margin: '0 auto 2.5rem auto' }}>
         <h2 style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.5px' }}>
-          How Stitch Fin Works
+          How the Claims Reconciliation System Works
         </h2>
         <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
           A 3-step automated pipeline from raw clearinghouse data to audit-ready settlement.
