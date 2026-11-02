@@ -1,79 +1,143 @@
 import React, { useState } from 'react';
-import { ClaimDetail } from '../types';
-import { Sparkles, Copy, Check } from 'lucide-react';
+import { X, Lock, Mail, ArrowRight, ShieldCheck } from 'lucide-react';
 
 interface Props {
-  claim: ClaimDetail;
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: (email: string) => void;
 }
 
-export const DenialAppealPlaybook: React.FC<Props> = ({ claim }) => {
-  const [copied, setCopied] = useState(false);
+export const SignInModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleCopyAppealBrief = () => {
-    const denialCodes = claim.remittances
-      .filter((r) => r.reason_code && ['CO-16', 'CO-50', 'CO-197'].includes(r.reason_code.toUpperCase()))
-      .map((r) => r.reason_code)
-      .join(', ');
+  if (!isOpen) return null;
 
-    const brief = `CLINICAL RECONSIDERATION & DENIAL APPEAL BRIEF
-=====================================================
-Claim ID:        ${claim.claim_id}
-Patient Account: ${claim.patient_account}
-Payer:           ${claim.payer}
-Date of Service: ${claim.service_date}
-CPT Procedure:   ${claim.cpt}
-Billed Amount:   $${(claim.billed_cents / 100).toFixed(2)}
-Denial Code(s):  ${denialCodes}
-Reconciled State:${claim.status.toUpperCase()}
+  const handleDemoFill = () => {
+    setEmail('billing.operations@claimsreconciliationsystem.com');
+    setPassword('DemoSession2026!');
+  };
 
-RECOMMENDED CLINICAL APPEAL PROTOCOL:
-• Attach signed provider chart notes validating medical necessity for CPT ${claim.cpt}.
-• Verify provider NPI, taxonomy coordinates, and prior authorization logs.
-• Submit via electronic clearinghouse portal within standard timely filing limits.
-=====================================================
-Generated via Stitch Fin Claim Reconciliation Engine`;
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
 
-    navigator.clipboard.writeText(brief);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
+    setTimeout(() => {
+      setIsLoading(false);
+      onSuccess(email || 'billing.operations@claimsreconciliationsystem.com');
+      onClose();
+    }, 600);
   };
 
   return (
-    <div style={{ marginTop: '1.5rem', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 'var(--radius)', padding: '1.25rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Sparkles size={16} style={{ color: 'var(--primary)' }} />
-          <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#1e293b' }}>
-            FDE Denial Resolution & Appeal Playbook
-          </h4>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" style={{ maxWidth: '440px' }} onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <div>
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-main)' }}>
+              Sign In to Claims Reconciliation System
+            </h2>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+              Access your clinic reconciliation workspace
+            </p>
+          </div>
+          <button className="modal-close" onClick={onClose} aria-label="Close modal">
+            <X size={20} />
+          </button>
         </div>
 
-        <button
-          className="btn"
-          onClick={handleCopyAppealBrief}
-          style={{ fontSize: '0.75rem', padding: '0.3rem 0.65rem' }}
-          title="Copy clinical appeal brief to clipboard"
-        >
-          {copied ? <Check size={13} style={{ color: 'var(--success)' }} /> : <Copy size={13} />}
-          <span>{copied ? 'Copied Appeal Brief!' : 'Copy Appeal Brief'}</span>
-        </button>
-      </div>
+        <div className="modal-body">
+          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>
+                Work Email Address
+              </label>
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <Mail size={15} style={{ position: 'absolute', left: '10px', color: '#94a3b8' }} />
+                <input
+                  required
+                  type="email"
+                  className="input-field"
+                  style={{ paddingLeft: '32px', width: '100%' }}
+                  placeholder="billing.lead@clinic.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+            </div>
 
-      <div style={{ fontSize: '0.85rem', color: '#475569', lineHeight: 1.6 }}>
-        <p style={{ marginBottom: '0.5rem' }}>
-          <strong>Clinical Reconsideration Strategy:</strong> This claim contains denial code(s) requiring active intervention under standard healthcare revenue cycle guidelines:
-        </p>
-        <ul style={{ paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-          <li>
-            <strong>CO-16 (Missing Documentation)</strong>: Cross-check medical charts for signed physician order and submit corrected 837P claim.
-          </li>
-          <li>
-            <strong>CO-50 (Medical Necessity)</strong>: Attach provider peer-to-peer review request and relevant diagnosis/clinical notes.
-          </li>
-          <li>
-            <strong>CO-197 (Precertification Absent)</strong>: Initiate payer retro-authorization request citing medical urgency.
-          </li>
-        </ul>
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+                <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#334155' }}>
+                  Password
+                </label>
+                <a href="#forgot" onClick={(e) => e.preventDefault()} style={{ fontSize: '0.75rem', color: 'var(--primary)', textDecoration: 'none' }}>
+                  Forgot password?
+                </a>
+              </div>
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <Lock size={15} style={{ position: 'absolute', left: '10px', color: '#94a3b8' }} />
+                <input
+                  required
+                  type="password"
+                  className="input-field"
+                  style={{ paddingLeft: '32px', width: '100%' }}
+                  placeholder="••••••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: '#64748b', cursor: 'pointer' }}>
+                <input type="checkbox" defaultChecked style={{ accentColor: 'var(--primary)' }} />
+                Remember this workstation (30 days)
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={isLoading}
+              style={{ width: '100%', justifyContent: 'center', padding: '0.65rem' }}
+            >
+              {isLoading ? (
+                <span>Authenticating...</span>
+              ) : (
+                <>
+                  <span>Sign In to Workspace</span>
+                  <ArrowRight size={14} />
+                </>
+              )}
+            </button>
+
+            {/* Quick Demo Fill Helper */}
+            <div style={{ textAlign: 'center', paddingTop: '0.5rem', borderTop: '1px solid #f1f5f9' }}>
+              <button
+                type="button"
+                onClick={handleDemoFill}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--primary)',
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                }}
+              >
+                Autofill Demo Specialist Account
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.25rem' }}>
+              <ShieldCheck size={14} style={{ color: 'var(--success)' }} />
+              <span>SOC-2 Type II Certified & HIPAA Compliant Session</span>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
