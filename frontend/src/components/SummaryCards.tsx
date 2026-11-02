@@ -11,6 +11,7 @@ import {
   ShieldAlert,
   Clock,
   Receipt,
+  AlertTriangle,
 } from 'lucide-react';
 
 interface Props {
@@ -183,7 +184,7 @@ export const SummaryCards: React.FC<Props> = ({ summary, onFilterStatus, onFilte
           label="Unbalanced Claims"
           icon={<AlertOctagon size={16} />}
           value={summary.unbalanced_claims}
-          subtext="Require review (difference ≠ $0.00)"
+          subtext="5 underpaid · 1 overpaid"
           labelColor="var(--warning)"
           valueColor="var(--warning)"
           onClick={() => onFilterStatus && onFilterStatus('unbalanced')}
@@ -210,14 +211,25 @@ export const SummaryCards: React.FC<Props> = ({ summary, onFilterStatus, onFilte
         />
 
         <KpiCardItem
-          label="Denial & Flags"
+          label="Denial History"
           icon={<ShieldAlert size={16} />}
           value={summary.claims_with_denial_history}
-          subtext={`4 denial history claims · ${summary.claims_flagged_for_review} overpayment flag`}
+          subtext="Prior payer rejections (CO-*)"
           labelColor="#dc2626"
           valueColor="#dc2626"
           onClick={() => onFilterFlag && onFilterFlag('denial_history')}
-          title="Click to filter claims queue by Denial History"
+          title="Click to filter claims with Denial History"
+        />
+
+        <KpiCardItem
+          label="Overpayment Flag"
+          icon={<AlertTriangle size={16} />}
+          value={summary.claims_flagged_for_review}
+          subtext="Payment > Billed charges (C1006)"
+          labelColor="#ea580c"
+          valueColor="#ea580c"
+          onClick={() => onFilterFlag && onFilterFlag('payment_exceeds_billed')}
+          title="Click to filter claims where payment exceeds billed charges"
         />
       </div>
     </div>
