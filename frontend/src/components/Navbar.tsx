@@ -16,7 +16,6 @@ export const Navbar: React.FC<Props> = ({
 }) => {
   return (
     <header className="header">
-      {/* Brand Logo - Clean horizontal line, no wrap */}
       <a
         href="#"
         style={{
@@ -49,11 +48,10 @@ export const Navbar: React.FC<Props> = ({
             whiteSpace: 'nowrap',
           }}
         >
-          Stitch<span style={{ color: 'var(--primary)' }}>Fin</span>
+          Claims Reconciliation System
         </span>
       </a>
 
-      {/* Clean SaaS Navigation */}
       <nav style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <a
@@ -79,7 +77,6 @@ export const Navbar: React.FC<Props> = ({
           </a>
         </div>
 
-        {/* Right CTA Action Buttons */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           {currentUser ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
@@ -102,29 +99,21 @@ export const Navbar: React.FC<Props> = ({
               <button
                 className="btn"
                 onClick={onSignOut}
-                style={{ fontSize: '0.75rem', padding: '0.35rem 0.65rem' }}
+                style={{ padding: '0.55rem 0.9rem', fontSize: '0.8rem' }}
               >
                 Sign Out
               </button>
             </div>
           ) : (
-            <button
-              className="btn"
-              onClick={onOpenSignIn}
-              style={{ fontSize: '0.85rem', fontWeight: 600 }}
-            >
-              Sign In
-            </button>
+            <>
+              <button className="btn btn-secondary" onClick={onOpenSignIn} style={{ padding: '0.55rem 0.9rem', fontSize: '0.8rem' }}>
+                Sign In
+              </button>
+              <button className="btn btn-primary" onClick={onRequestDemo} style={{ padding: '0.55rem 0.9rem', fontSize: '0.8rem' }}>
+                Book Demo
+              </button>
+            </>
           )}
-
-          <button
-            className="btn btn-primary"
-            onClick={onRequestDemo}
-            style={{ fontSize: '0.85rem', padding: '0.45rem 1rem', whiteSpace: 'nowrap' }}
-          >
-            <Calendar size={14} />
-            <span>Request Demo</span>
-          </button>
         </div>
       </nav>
     </header>
