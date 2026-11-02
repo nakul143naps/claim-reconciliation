@@ -15,8 +15,19 @@ class Settings(BaseSettings):
     API_HOST: str = Field(default="0.0.0.0", description="Host to bind the API server")
     API_PORT: int = Field(default=8000, description="Port to bind the API server")
     CORS_ORIGINS: List[str] = Field(
-        default=["http://localhost:3000", "http://localhost:5173"],
+        default=[
+            "http://localhost:3000",
+            "http://localhost:5173",
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:5173",
+            "https://claim-reconciliation.duckdns.org",
+            "http://67.202.41.44",
+        ],
         description="Allowed CORS origins",
+    )
+    ADMIN_API_KEY: str = Field(
+        default="reconcile-admin-secret-2026",
+        description="Secret key required for administrative and destructive operations",
     )
     ENVIRONMENT: str = Field(default="development", description="Application environment")
 

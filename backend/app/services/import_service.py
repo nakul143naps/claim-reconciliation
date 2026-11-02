@@ -6,6 +6,7 @@ and bi-directional orphan remittance auto-relinking per RULES.md.
 
 import csv
 import io
+import re
 from datetime import date, datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple, Union
@@ -44,11 +45,16 @@ class CSVHeaderError(Exception):
 # Field Parsing Helpers
 # -----------------------------------------------------------------------------
 
+_ISO_DATE_REGEX = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
 def parse_iso_date(value: str, field_name: str) -> date:
     """Parse strict ISO YYYY-MM-DD date."""
     trimmed = value.strip()
     if not trimmed:
         raise ValueError(f"{field_name} date is required and cannot be empty")
+    if not _ISO_DATE_REGEX.match(trimmed):
+        raise ValueError(f"{field_name} must be a valid date in strict YYYY-MM-DD format (got '{value}')")
     try:
         return datetime.strptime(trimmed, "%Y-%m-%d").date()
     except ValueError:
@@ -100,14 +106,19 @@ class ImportService:
     # -------------------------------------------------------------------------
 
     @staticmethod
-    def _validate_headers(fieldnames: Optional[List[str]], expected: Set[str], label: str) -> None:
-        """Enforce presence of required CSV headers."""
+    def _validate_headers(fieldnames: Optional[List[str]], expected: Set[str], label: str) -> List[str]:
+        """Enforce presence of required CSV headers and normalize header names."""
         if not fieldnames:
             raise CSVHeaderError(f"{label} CSV file is empty or missing header row")
-        found = {h.strip() for h in fieldnames if h}
+        normalized = [h.strip() if h else "" for h in fieldnames]
+        non_empty = [h for h in normalized if h]
+        if len(non_empty) != len(set(non_empty)):
+            raise CSVHeaderError(f"{label} CSV contains duplicate column headers after normalization")
+        found = set(non_empty)
         missing = expected - found
         if missing:
             raise CSVHeaderError(f"{label} CSV missing required header(s): {', '.join(sorted(missing))}")
+        return normalized
 
     @staticmethod
     def _record_issue(
@@ -126,10 +137,10 @@ class ImportService:
             RowIssue(row_number=row_num, record_id=record_id, code=code, message=message)
         )
 
-    def _relink_orphan_remittances(self, new_claim_ids: List[str]) -> None:
+    def _relink_orphan_remittances(self, new_claim_ids: List[str]) -> int:
         """Auto-link any waiting orphaned remittances whose claim was just imported."""
         if not new_claim_ids:
-            return
+            return 0
         waiting = (
             self.db.query(Remittance)
             .filter(Remittance.claim_id.is_(None), Remittance.source_claim_id.in_(new_claim_ids))
@@ -137,6 +148,7 @@ class ImportService:
         )
         for remit in waiting:
             remit.claim_id = remit.source_claim_id
+        return len(waiting)
 
     # -------------------------------------------------------------------------
     # Claims Ingestion
@@ -201,7 +213,7 @@ class ImportService:
         """Parse and insert claim records with row-level savepoints."""
         result = FileImportResult(filename=filename)
         reader = csv.DictReader(handle)
-        self._validate_headers(reader.fieldnames, EXPECTED_CLAIM_HEADERS, "Claims")
+        reader.fieldnames = self._validate_headers(reader.fieldnames, EXPECTED_CLAIM_HEADERS, "Claims")
 
         seen_in_batch: Dict[str, Claim] = {}
 
@@ -226,8 +238,9 @@ class ImportService:
             except Exception as e:
                 self._record_issue(result, row_idx, raw_id, "DATABASE_ERROR", f"Unexpected error: {e}")
 
-        # Auto-link any waiting orphan remittances
-        self._relink_orphan_remittances(list(seen_in_batch.keys()))
+        # Auto-link any waiting orphan remittances and track in relinked count
+        relinked_count = self._relink_orphan_remittances(list(seen_in_batch.keys()))
+        result.relinked += relinked_count
         self.db.commit()
         return result
 
@@ -292,19 +305,22 @@ class ImportService:
         # 2. Check in database
         existing = self.db.query(Remittance).filter(Remittance.remit_id == rid).first()
         if existing:
-            # If previously orphaned but now matches a claim, link it
-            if existing.claim_id is None and linked_claim_id is not None:
-                existing.claim_id = linked_claim_id
-                result.inserted += 1
-                seen[rid] = existing
-            elif self._is_identical_remittance(existing, candidate):
-                result.duplicate_noop += 1
-                seen[rid] = existing
-            else:
+            # First check if the financial/business data is identical
+            if not self._is_identical_remittance(existing, candidate):
                 self._record_issue(
                     result, row_num, rid, "CONFLICTING_EXISTING_ID",
                     f"Remittance ID '{rid}' already exists in database with different data", is_conflict=True,
                 )
+                return False
+
+            # If identical and was previously orphaned but now matches a claim, relink it
+            if existing.claim_id is None and linked_claim_id is not None:
+                existing.claim_id = linked_claim_id
+                result.relinked += 1
+                seen[rid] = existing
+            else:
+                result.duplicate_noop += 1
+                seen[rid] = existing
             return False
 
         return True
@@ -313,7 +329,7 @@ class ImportService:
         """Parse and insert remittance records with row-level savepoints."""
         result = FileImportResult(filename=filename)
         reader = csv.DictReader(handle)
-        self._validate_headers(reader.fieldnames, EXPECTED_REMITTANCE_HEADERS, "Remittances")
+        reader.fieldnames = self._validate_headers(reader.fieldnames, EXPECTED_REMITTANCE_HEADERS, "Remittances")
 
         known_claim_ids: Set[str] = {c.claim_id for c in self.db.query(Claim.claim_id).all()}
         seen_in_batch: Dict[str, Remittance] = {}

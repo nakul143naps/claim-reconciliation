@@ -19,6 +19,7 @@ class FileImportResult(BaseModel):
     filename: str
     rows_seen: int = 0
     inserted: int = 0
+    relinked: int = 0
     duplicate_noop: int = 0
     rejected: int = 0
     conflicting_existing_id: int = 0

@@ -225,11 +225,53 @@ def test_import_template_download(client: TestClient):
 
 
 def test_reset_benchmark_endpoint(client: TestClient):
-    """POST /api/import/reset restores canonical 12 claims and 13 remittances benchmark."""
-    response = client.post("/api/import/reset")
+    """POST /api/import/reset blocks unauthorized calls and restores canonical benchmark when authorized."""
+    # 1. Unauthenticated request must be blocked
+    forbidden_resp = client.post("/api/import/reset")
+    assert forbidden_resp.status_code == 403
+    assert forbidden_resp.json()["error"]["code"] == "FORBIDDEN"
+
+    # 2. Authenticated request with admin key succeeds
+    response = client.post("/api/import/reset", headers={"X-Admin-Key": "reconcile-admin-secret-2026"})
     assert response.status_code == 200
     data = response.json()
     assert data["success"] is True
     assert data["claims"]["rows_seen"] == 12
     assert data["remittances"]["rows_seen"] == 13
+
+
+def test_oversized_csv_upload_rejected(client: TestClient):
+    """Uploading a file exceeding 10 MB must be rejected with 413 Payload Too Large."""
+    oversized_data = b"claim_id,patient_account,payer,service_date,cpt,billed_cents\n" + b"X" * (11 * 1024 * 1024)
+    response = client.post(
+        "/api/import/claims",
+        files={"file": ("huge.csv", oversized_data, "text/csv")},
+    )
+    assert response.status_code == 413
+    assert response.json()["error"]["code"] == "FILE_TOO_LARGE"
+
+
+def test_claim_deletion_preserves_remittances(db_session: Session, import_service: ImportService):
+    """Deleting a claim in ORM must preserve associated remittances as orphans (no delete-orphan)."""
+    from backend.app.db.models import Claim, Remittance
+    data_dir = Path(__file__).resolve().parents[3] / "data"
+    import_service.import_all(data_dir / "claims.csv", data_dir / "remittances.csv")
+
+    # Retrieve claim C1001 and its linked remittance
+    claim = db_session.query(Claim).filter(Claim.claim_id == "C1001").first()
+    assert claim is not None
+    remit = db_session.query(Remittance).filter(Remittance.claim_id == "C1001").first()
+    assert remit is not None
+    remit_id = remit.remit_id
+
+    # Delete claim
+    db_session.delete(claim)
+    db_session.commit()
+
+    # Remittance still exists in database as an orphan
+    preserved = db_session.query(Remittance).filter(Remittance.remit_id == remit_id).first()
+    assert preserved is not None
+    assert preserved.claim_id is None
+    assert preserved.source_claim_id == "C1001"
+
 

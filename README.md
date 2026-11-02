@@ -1,7 +1,7 @@
 # Claims Reconciliation System
 
 [![Live Demo on AWS](https://img.shields.io/badge/Live_Demo-HTTPS_Production-0284c7?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://claim-reconciliation.duckdns.org/)
-[![Tests Passing](https://img.shields.io/badge/Tests-38%2F38_Passing-10b981?style=for-the-badge&logo=pytest)](https://github.com/nakul143naps/claim-reconciliation)
+[![Tests Passing](https://img.shields.io/badge/Tests-44%2F44_Passing-10b981?style=for-the-badge&logo=pytest)](https://github.com/nakul143naps/claim-reconciliation)
 [![MySQL 8.0](https://img.shields.io/badge/Database-MySQL_8.0_Docker-f59e0b?style=for-the-badge&logo=mysql)](https://github.com/nakul143naps/claim-reconciliation)
 
 > 🌐 **Live AWS EC2 Deployment**: [https://claim-reconciliation.duckdns.org/](https://claim-reconciliation.duckdns.org/)  
@@ -92,7 +92,7 @@ When a payer sends payment for an unknown claim (e.g. remit `R1012` referencing 
 * **Backend**: Python 3.13, FastAPI, SQLAlchemy 2.0, Pydantic v2, PyMySQL, Cryptography, python-multipart.
 * **Database**: MySQL 8.0 (Dockerized container `claim_reconciliation_db`) with persistent volumes and healthcheck; SQLite with `StaticPool` for fast in-memory testing.
 * **Frontend**: React 18, TypeScript, Vite, Lucide Icons, Accessible High-Contrast CSS.
-* **Testing**: Pytest, FastAPI TestClient, HTTPX (38 automated unit, integration, and scale tests).
+* **Testing**: Pytest, FastAPI TestClient, HTTPX (44 automated unit, integration, and scale tests).
 
 ---
 
@@ -207,7 +207,7 @@ Open your browser at: [http://localhost:3000](http://localhost:3000)
 
 ## 7. Automated Testing
 
-The project includes **38 automated unit, integration, and scale tests** covering calculation formulas, duplicate handling, schema validation, HTTP error codes, orphan quarantine, and 50-claim pagination invariants.
+The project includes **44 automated unit, integration, and scale tests** covering calculation formulas, duplicate handling, schema validation, HTTP error codes, orphan quarantine, and 50-claim pagination invariants.
 
 ```bash
 # Run full test suite from project root:

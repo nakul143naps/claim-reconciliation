@@ -37,7 +37,7 @@ class Claim(Base):
     remittances: Mapped[List["Remittance"]] = relationship(
         "Remittance",
         back_populates="claim",
-        cascade="all, delete-orphan",
+        cascade="save-update, merge",
         order_by="[Remittance.posted_date, Remittance.remit_id]",
     )
 

@@ -104,6 +104,7 @@ export interface FileImportResult {
   filename: string;
   rows_seen: number;
   inserted: number;
+  relinked?: number;
   duplicate_noop: number;
   rejected: number;
   conflicting_existing_id: number;

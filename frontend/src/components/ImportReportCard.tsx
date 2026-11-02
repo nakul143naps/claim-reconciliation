@@ -22,7 +22,7 @@ export const ImportReportCard: React.FC<Props> = ({ importResult }) => {
         <span>Import Ingestion Completed: {importResult.filename}</span>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.6rem', textAlign: 'center', fontSize: '0.8rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: (importResult.relinked ?? 0) > 0 ? 'repeat(5, 1fr)' : 'repeat(4, 1fr)', gap: '0.6rem', textAlign: 'center', fontSize: '0.8rem' }}>
         <div style={{ background: '#fff', padding: '0.5rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
           <div style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>Rows Seen</div>
           <div style={{ fontWeight: 700, fontSize: '1rem' }}>{importResult.rows_seen}</div>
@@ -31,6 +31,12 @@ export const ImportReportCard: React.FC<Props> = ({ importResult }) => {
           <div style={{ color: 'var(--success)', fontSize: '0.7rem' }}>Inserted</div>
           <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--success)' }}>{importResult.inserted}</div>
         </div>
+        {(importResult.relinked ?? 0) > 0 && (
+          <div style={{ background: '#fff', padding: '0.5rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+            <div style={{ color: '#0284c7', fontSize: '0.7rem' }}>Orphans Relinked</div>
+            <div style={{ fontWeight: 700, fontSize: '1rem', color: '#0284c7' }}>{importResult.relinked}</div>
+          </div>
+        )}
         <div style={{ background: '#fff', padding: '0.5rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
           <div style={{ color: 'var(--primary)', fontSize: '0.7rem' }}>Duplicates Skipped</div>
           <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--primary)' }}>{importResult.duplicate_noop}</div>

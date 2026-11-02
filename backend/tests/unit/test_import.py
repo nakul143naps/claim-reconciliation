@@ -155,3 +155,86 @@ def test_partial_import_valid_rows_commit(import_service: ImportService, tmp_pat
     assert result.inserted == 2
     assert result.rejected == 1
     assert result.issues[0].record_id == "C002"
+
+
+def test_existing_orphan_conflicting_payment_rejected(import_service: ImportService, tmp_path: Path):
+    """An incoming remittance with existing ID but changed financial data must be rejected, not relinked."""
+    # 1. Ingest an orphan remittance pointing to non-existent claim C9999
+    remit_file = tmp_path / "orphan_remit.csv"
+    remit_file.write_text(
+        "remit_id,claim_id,payer,paid_cents,adjustment_cents,patient_responsibility_cents,reason_code,posted_date\n"
+        "R9001,C9999,Northwind Health,40000,0,0,,2026-10-01\n",
+        encoding="utf-8",
+    )
+    res1 = import_service.import_remittances_csv(remit_file)
+    assert res1.inserted == 1
+
+    # 2. Now claim C9999 is created
+    claim_file = tmp_path / "claim.csv"
+    claim_file.write_text(
+        "claim_id,patient_account,payer,service_date,cpt,billed_cents\n"
+        "C9999,A9999,Northwind Health,2026-09-20,99213,50000\n",
+        encoding="utf-8",
+    )
+    import_service.import_claims_csv(claim_file)
+
+    # 3. New remittance CSV arrives with same R9001, but conflicting paid_cents (90000 instead of 40000)
+    conflict_remit = tmp_path / "conflict_remit.csv"
+    conflict_remit.write_text(
+        "remit_id,claim_id,payer,paid_cents,adjustment_cents,patient_responsibility_cents,reason_code,posted_date\n"
+        "R9001,C9999,Northwind Health,90000,0,0,,2026-10-01\n",
+        encoding="utf-8",
+    )
+    res_conflict = import_service.import_remittances_csv(conflict_remit)
+    assert res_conflict.inserted == 0
+    assert res_conflict.relinked == 0
+    assert res_conflict.conflicting_existing_id == 1
+    assert res_conflict.issues[0].code == "CONFLICTING_EXISTING_ID"
+
+
+def test_orphan_relinking_and_counter(import_service: ImportService, tmp_path: Path):
+    """When an orphan remittance is relinked, it must be counted in 'relinked', not 'inserted'."""
+    # 1. Ingest orphan remittance
+    remit_file = tmp_path / "orphan.csv"
+    remit_file.write_text(
+        "remit_id,claim_id,payer,paid_cents,adjustment_cents,patient_responsibility_cents,reason_code,posted_date\n"
+        "R8001,C8888,Cedar Mutual,10000,0,0,,2026-10-01\n",
+        encoding="utf-8",
+    )
+    res_remit = import_service.import_remittances_csv(remit_file)
+    assert res_remit.inserted == 1
+    assert res_remit.relinked == 0
+
+    # 2. Ingest matching claim -> auto-relinks orphan and increments relinked counter
+    claim_file = tmp_path / "matching_claim.csv"
+    claim_file.write_text(
+        "claim_id,patient_account,payer,service_date,cpt,billed_cents\n"
+        "C8888,A8888,Cedar Mutual,2026-09-15,99213,10000\n",
+        encoding="utf-8",
+    )
+    res_claim = import_service.import_claims_csv(claim_file)
+    assert res_claim.inserted == 1
+    assert res_claim.relinked == 1
+
+
+def test_csv_header_whitespace_normalization(import_service: ImportService, tmp_path: Path):
+    """CSV headers containing leading and trailing whitespace must be normalized transparently."""
+    messy_file = tmp_path / "messy_headers.csv"
+    messy_file.write_text(
+        " claim_id , patient_account , payer , service_date , cpt , billed_cents \n"
+        "C7777,A7777,Harbor Plan,2026-09-01,99213,12000\n",
+        encoding="utf-8",
+    )
+    res = import_service.import_claims_csv(messy_file)
+    assert res.inserted == 1
+    assert res.rejected == 0
+
+
+def test_strict_iso_date_format_rejection():
+    """Non-padded or malformed date formats must be strictly rejected per ISO YYYY-MM-DD."""
+    from backend.app.services.import_service import parse_iso_date
+    with pytest.raises(ValueError, match="strict YYYY-MM-DD format"):
+        parse_iso_date("2026-9-2", "service_date")
+    with pytest.raises(ValueError, match="strict YYYY-MM-DD format"):
+        parse_iso_date("09/02/2026", "service_date")
+

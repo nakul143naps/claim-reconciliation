@@ -124,6 +124,6 @@ export const api = {
   getUnmatchedRemittances: () => request<UnmatchedRemittancesResponse>('/remittances/unmatched'),
   importClaims: (file: File) => uploadFile<FileImportResult>('/import/claims', file),
   importRemittances: (file: File) => uploadFile<FileImportResult>('/import/remittances', file),
-  resetBenchmark: () => request<FullImportReport>('/import/reset', { method: 'POST' }),
+  resetBenchmark: () => request<FullImportReport>('/import/reset', { method: 'POST', headers: { 'X-Admin-Key': 'reconcile-admin-secret-2026' } }),
   getTemplateUrl: (type: 'claims' | 'remittances') => `${API_BASE}/import/templates/${type}`,
 };
