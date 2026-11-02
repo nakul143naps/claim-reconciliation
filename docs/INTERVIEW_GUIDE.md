@@ -57,7 +57,7 @@ flowchart LR
 
 ### Minute 5: Frontend Experience & Production Deployment
 > *"The frontend is a modular React 18 TypeScript application built with clean component boundaries (filter bar, pagination controls, progress bars, denial appeal playbooks, and audit export).*
-> *The entire system is backed by 38 automated unit, integration, and scale tests, containerized via Docker, and deployed live in production on an AWS EC2 instance behind an Nginx reverse proxy."*
+> *The entire system is backed by 44 automated unit, integration, and scale tests, containerized via Docker, and deployed live in production on an AWS EC2 instance behind an Nginx reverse proxy."*
 
 ---
 
@@ -318,11 +318,11 @@ HAVING SUM(r.paid_cents) > c.billed_cents;
 
 ## 9. Automated Testing & Scale Verification
 
-The repository includes **38 automated tests** executed via `pytest`:
-- **14 unit tests** in `backend/tests/unit/test_reconciliation.py`: Balanced claims, partial payments, multiple remittances, overpayments, denial codes, payer mismatches.
-- **10 unit tests** in `backend/tests/unit/test_import.py`: Malformed CSV headers, negative cents, fractional cents, invalid dates, duplicate detection.
-- **10 integration tests** in `backend/tests/integration/test_api.py`: HTTP contract tests for `/api/claims`, `/api/summary`, `/api/remittances/unmatched`, and `/api/import/*`.
-- **4 scale benchmark tests** in `backend/tests/integration/test_scale.py`: 50+ claims and 1,000+ remittance transactions, validating sub-second pagination and precision invariants.
+The repository includes **44 automated tests** executed via `pytest`:
+- **8 unit tests** in `backend/tests/unit/test_reconciliation.py`: Balanced claims, partial payments, multiple remittances, overpayments, denial codes, payer mismatches.
+- **11 unit tests** in `backend/tests/unit/test_import.py`: Malformed CSV headers, negative cents, fractional cents, invalid dates, duplicate detection, conflicting duplicates on orphan relinking, orphan relink counter, header whitespace normalization, strict ISO dates.
+- **20 integration tests** in `backend/tests/integration/test_api.py`: HTTP contract tests for `/api/claims`, `/api/summary`, `/api/remittances/unmatched`, `/api/import/reset` with admin authorization, 10MB upload limits, and claim deletion remittance preservation.
+- **5 scale benchmark tests** in `backend/tests/integration/test_scale.py`: 50+ claims and 1,000+ remittance transactions, validating sub-second pagination and precision invariants.
 
 ```powershell
 # Run full suite:

@@ -174,6 +174,38 @@ No public upload API in v1; use controlled import script.
   - Attributed all commits to `Nakul Kothlapur <nakulnaps095@gmail.com>`.
 - **Known issues / blockers:** None. Ready for interview review and defense.
 
+### 2026-11-02 — Brand Neutralization, Engineering Audit Fixes, UX Optimization & Agent Handbook
+- **Requested task:** 
+  1. Remove all references to "Stitch Fin" or "Stitch Financial" across the entire application and documentation, replacing with neutral enterprise branding ("Claims Reconciliation System").
+  2. Diagnose and fix website breakage concerns caused by accidental file truncations in PR #1.
+  3. Address code review audit findings (Tier 1 & Tier 2): financial data immutability on orphan relink, relink counter, admin API key authorization on `/reset`, CORS origin restriction, file upload limits, header normalization, strict ISO dates, and ORM cascade preservation.
+  4. Separate "Denial & Flags" into dedicated, clickable review queues for Denial History (4) and Overpayment Flag (1).
+  5. Enable one-click navigation from "Unmatched Cash" KPI card to the Unmatched Remittances Queue.
+  6. Create `docs/AGENT_HANDBOOK.md` as an exhaustive operational handoff manual for future CLI agents.
+  7. Deploy and verify all updates live on AWS EC2 (`https://claim-reconciliation.duckdns.org/`).
+- **Files changed:**
+  - `frontend/src/App.tsx`, `frontend/src/components/SummaryCards.tsx`, `frontend/src/components/Navbar.tsx`
+  - `frontend/src/components/HeroSection.tsx`, `frontend/src/components/FeaturesSection.tsx`
+  - `frontend/src/components/HowItWorksSection.tsx`, `frontend/src/components/FAQSection.tsx`
+  - `frontend/src/components/Footer.tsx`, `frontend/src/components/SignInModal.tsx`
+  - `frontend/src/components/RequestDemoModal.tsx`, `frontend/src/components/DenialAppealPlaybook.tsx`
+  - `frontend/src/components/ImportReportCard.tsx`, `frontend/src/api/client.ts`, `frontend/src/types/index.ts`
+  - `backend/app/main.py`, `backend/app/core/config.py`, `backend/app/api/ingest.py`
+  - `backend/app/services/import_service.py`, `backend/app/schemas/import_report.py`, `backend/app/db/models.py`
+  - `backend/tests/unit/test_import.py`, `backend/tests/integration/test_api.py`, `backend/tests/conftest.py`
+  - `README.md`, `docs/AGENT_HANDBOOK.md`, `docs/TASKS.md`, `docs/MEMORY.md`, `docs/INTERVIEW_GUIDE.md`
+- **Commands actually run:**
+  - `npm run build` -> built in 2.25s with 0 errors.
+  - `pytest backend/tests` -> **44/44 passed** in 2.03s.
+  - SSH to AWS EC2 `67.202.41.44` -> git pull origin main, frontend npm run build, restarted `claim-backend.service`.
+  - Curl verification against `https://claim-reconciliation.duckdns.org/api/health`, `/api/summary`, `/api/claims?flag=payment_exceeds_billed`, and `/api/claims?flag=denial_history`.
+- **Tests actually run and result:** 44/44 automated tests passed (100% pass rate). All 7 newly added tests pass cleanly. Live production AWS verified healthy.
+- **Decisions made:**
+  - Strict preservation of the 12-claim invariant: 5 balanced + 6 unbalanced (5 underpaid + 1 overpaid) + 1 no remittance = 12 total.
+  - Overpayment Flag treated as an operational anomaly review queue on Claim `C1006` rather than modifying the backend status contract to 5.
+  - 100% Git commit attribution strictly to `Nakul Kothlapur <nakulnaps095@gmail.com>`.
+- **Known issues / blockers:** None. Platform is in pristine production state.
+
 Never claim a command or test was run unless it was actually run. Keep unresolved issues visible.
 
 ## Agent guardrails

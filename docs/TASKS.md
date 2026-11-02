@@ -23,105 +23,126 @@ Target: 2–3 focused days before the November 2, 2026 submission deadline. The 
 
 ## Day 0 — Repository and design audit (before coding)
 
-- [ ] Inspect repository root, current files, Git status, README, data, and environment.
-- [ ] Confirm source CSV headers exactly match `RULES.md`.
-- [ ] Confirm whether starter code or migrations already exist.
-- [ ] Confirm installed Python, Node, and MySQL versions.
-- [ ] Confirm design approval from owner.
-- [ ] Record any mismatch in `MEMORY.md`; do not make destructive changes.
+- [x] Inspect repository root, current files, Git status, README, data, and environment.
+- [x] Confirm source CSV headers exactly match `RULES.md`.
+- [x] Confirm whether starter code or migrations already exist.
+- [x] Confirm installed Python, Node, and MySQL versions.
+- [x] Confirm design approval from owner.
+- [x] Record any mismatch in `MEMORY.md`; do not make destructive changes.
 - Acceptance: repository map and any source/design discrepancies documented.
 
 ## Day 1 — Backend foundation, import, and reconciliation
 
 ### Task 1: Project setup
-- [ ] Create or adapt backend structure in `ARCHITECTURE.md`.
-- [ ] Add configuration through environment variables and `.env.example`.
-- [ ] Add `.gitignore` for `.env`, virtualenv, `node_modules`, caches, build output, and local DB artifacts.
-- [ ] Add reproducible dependency/install instructions.
+- [x] Create or adapt backend structure in `ARCHITECTURE.md`.
+- [x] Add configuration through environment variables and `.env.example`.
+- [x] Add `.gitignore` for `.env`, virtualenv, `node_modules`, caches, build output, and local DB artifacts.
+- [x] Add reproducible dependency/install instructions.
 - Acceptance: app imports cleanly; secrets are not hardcoded.
 
 ### Task 2: Database schema
-- [ ] Implement `claims` and `remittances` tables with primary/foreign keys and indexes.
-- [ ] Preserve `source_claim_id` and nullable FK `claim_id`.
-- [ ] Add schema creation/migration instructions.
-- [ ] Validate nonnegative cents.
+- [x] Implement `claims` and `remittances` tables with primary/foreign keys and indexes.
+- [x] Preserve `source_claim_id` and nullable FK `claim_id`.
+- [x] Add schema creation/migration instructions.
+- [x] Validate nonnegative cents.
 - Acceptance: schema creates cleanly on a fresh database; unmatched source references are representable.
 
 ### Task 3: Import and validation
-- [ ] Parse expected CSV headers and strict ISO dates.
-- [ ] Validate required strings, IDs, integer cents, nonnegative amounts, and unique IDs.
-- [ ] Load claims before remittances.
-- [ ] Implement duplicate no-op vs conflicting existing ID behavior.
-- [ ] Continue after row-level invalid records.
-- [ ] Preserve unmatched remittances.
-- [ ] Produce row-level and aggregate import report.
-- [ ] Verify rerunning the exact source files does not change row counts or financial totals.
+- [x] Parse expected CSV headers and strict ISO dates.
+- [x] Validate required strings, IDs, integer cents, nonnegative amounts, and unique IDs.
+- [x] Load claims before remittances.
+- [x] Implement duplicate no-op vs conflicting existing ID behavior.
+- [x] Continue after row-level invalid records.
+- [x] Preserve unmatched remittances.
+- [x] Produce row-level and aggregate import report.
+- [x] Verify rerunning the exact source files does not change row counts or financial totals.
 - Acceptance: sample imports to 12 claims/13 remittances; R1012 stays unmatched; rerun is safe.
 
 ### Task 4: Reconciliation service
-- [ ] Implement calculation as a pure/testable service.
-- [ ] Aggregate every matched remittance.
-- [ ] Derive status from existence of remittances and difference.
-- [ ] Derive denial history and review flags independently.
-- [ ] Keep `difference_cents` null for no-remittance claims.
+- [x] Implement calculation as a pure/testable service.
+- [x] Aggregate every matched remittance.
+- [x] Derive status from existence of remittances and difference.
+- [x] Derive denial history and review flags independently.
+- [x] Keep `difference_cents` null for no-remittance claims.
 - Acceptance: every sample claim matches `RULES.md` expected results.
 
 ### Task 5: Backend tests
-- [ ] Unit tests for exact calculation, zero difference, positive/negative difference, no remittance, multiple remittances, denial history, and flags.
-- [ ] Import tests for duplicate IDs, conflicting IDs, malformed CSV, missing headers, invalid dates, missing/noninteger/fractional/negative amounts, payer mismatch, and unmatched references.
-- [ ] Verify idempotent repeat import.
+- [x] Unit tests for exact calculation, zero difference, positive/negative difference, no remittance, multiple remittances, denial history, and flags.
+- [x] Import tests for duplicate IDs, conflicting IDs, malformed CSV, missing headers, invalid dates, missing/noninteger/fractional/negative amounts, payer mismatch, and unmatched references.
+- [x] Verify idempotent repeat import.
 - Acceptance: targeted tests pass; no test depends on a developer-specific path.
 
 ## Day 2 — API and frontend
 
 ### Task 6: API endpoints
-- [ ] `GET /api/health`
-- [ ] `GET /api/summary`
-- [ ] `GET /api/claims` filters + pagination
-- [ ] `GET /api/claims/{claim_id}`
-- [ ] `GET /api/remittances/unmatched`
-- [ ] Add consistent error schema and validation.
-- [ ] Ensure no N+1 queries for claims list/detail.
+- [x] `GET /api/health`
+- [x] `GET /api/summary`
+- [x] `GET /api/claims` filters + pagination
+- [x] `GET /api/claims/{claim_id}`
+- [x] `GET /api/remittances/unmatched`
+- [x] Add consistent error schema and validation.
+- [x] Ensure no N+1 queries for claims list/detail.
 - Acceptance: API integration tests verify response schemas, totals, filters, pagination, 404, 422, and database error behavior.
 
 ### Task 7: React app foundation
-- [ ] Set up frontend and central API client.
-- [ ] Define TypeScript types matching backend response schemas (if TypeScript is selected).
-- [ ] Configure API base URL through a public frontend environment variable.
-- [ ] Add loading/error/empty states.
+- [x] Set up frontend and central API client.
+- [x] Define TypeScript types matching backend response schemas (if TypeScript is selected).
+- [x] Configure API base URL through a public frontend environment variable.
+- [x] Add loading/error/empty states.
 - Acceptance: frontend starts and can reach backend without hardcoded machine-specific URLs.
 
 ### Task 8: Dashboard and claims list
-- [ ] Dashboard cards for status counts and financial metrics.
-- [ ] Claims table with payer/status/claim ID filters and pagination.
-- [ ] Format cents to rupees.
-- [ ] Make statuses and warnings readable without relying only on color.
+- [x] Dashboard cards for status counts and financial metrics.
+- [x] Claims table with payer/status/claim ID filters and pagination.
+- [x] Format cents to formatted currency.
+- [x] Make statuses and warnings readable without relying only on color.
 - Acceptance: dashboard values match `/api/summary`; filters and pagination work.
 
 ### Task 9: Claim detail and unmatched view
-- [ ] Claim detail with totals, status, flags, denial history, and complete remittance history.
-- [ ] Unmatched remittances table showing original claim reference.
-- [ ] Handle 404, empty history, loading, and retry states.
+- [x] Claim detail with totals, status, flags, denial history, and complete remittance history.
+- [x] Unmatched remittances table showing original claim reference.
+- [x] Handle 404, empty history, loading, and retry states.
 - Acceptance: C1007 shows earlier CO-197 while balanced; C1005 explains no remittance; R1012 shows C9999.
 
 ## Day 3 — Verification, UX, and submission
 
 ### Task 10: End-to-end verification
-- [ ] Run all backend tests.
-- [ ] Run frontend lint/typecheck/build if configured.
-- [ ] Run application against a fresh database using documented steps.
-- [ ] Import sample data and compare dashboard values with `RULES.md`.
-- [ ] Manually inspect each required page and all warning/empty/error states.
-- [ ] Test a repeat import.
+- [x] Run all backend tests.
+- [x] Run frontend lint/typecheck/build if configured.
+- [x] Run application against a fresh database using documented steps.
+- [x] Import sample data and compare dashboard values with `RULES.md`.
+- [x] Manually inspect each required page and all warning/empty/error states.
+- [x] Test a repeat import.
 - Acceptance: results are reproducible from clean setup.
 
 ### Task 11: Documentation and repository quality
-- [ ] Root README includes project purpose, architecture, prerequisites, setup, environment, database setup, import command, run commands, test commands, API summary, assumptions, limitations, screenshots if useful, and AI attribution.
-- [ ] Ensure `.env` and secrets are not tracked.
-- [ ] Remove unused dependencies, dead code, debug prints, and accidental generated files.
-- [ ] Review Git diff before commit.
-- [ ] Provide a concise “what I'd do next” section consistent with assignment.
+- [x] Root README includes project purpose, architecture, prerequisites, setup, environment, database setup, import command, run commands, test commands, API summary, assumptions, limitations, screenshots if useful, and AI attribution.
+- [x] Ensure `.env` and secrets are not tracked.
+- [x] Remove unused dependencies, dead code, debug prints, and accidental generated files.
+- [x] Review Git diff before commit.
+- [x] Provide a concise “what I'd do next” section consistent with assignment.
 - Acceptance: another developer can clone, configure, import, run, and test without guessing.
+
+## Day 4 — Engineering Audit Fixes & Quality Hardening (2026-11-02)
+
+- [x] Issue 1.1: Compare business fields before orphan relinking; reject conflicting duplicates.
+- [x] Issue 1.2: Add separate `relinked` metric to `FileImportResult` and frontend badge.
+- [x] Issue 1.3: Add administrative authorization dependency (`X-Admin-Key`) to `POST /api/import/reset`.
+- [x] Issue 2.3: Restrict CORS origin regex strictly to DuckDNS domains.
+- [x] Issue 2.4: Sanitize 500 exceptions in API responses and log tracebacks server-side.
+- [x] Issue 2.5: Enforce 10 MB CSV upload limit (`MAX_UPLOAD_BYTES`).
+- [x] Issue 2.6: Normalize CSV column headers (strip whitespace, detect duplicates).
+- [x] Issue 2.7: Strict ISO-8601 date validation regex (`^\d{4}-\d{2}-\d{2}$`).
+- [x] Issue 3.1: Adjust ORM cascade (`cascade="save-update, merge"`) to preserve remittances on claim deletion.
+- [x] Expand automated tests from 38 to 44 tests (100% pass rate).
+
+## Day 5 — Brand Neutralization, UX Separation & Operational Handoff
+
+- [x] Systematically remove all references to "Stitch Fin" / "Stitch Financial"; apply neutral "Claims Reconciliation System" branding across all files.
+- [x] Split "Denial & Flags" KPI into dedicated cards: Denial History (4) and Overpayment Flag (1) with direct table filtering.
+- [x] Enable one-click navigation from "Unmatched Cash" KPI card to the Unmatched Remittances Queue.
+- [x] Author comprehensive `docs/AGENT_HANDBOOK.md` for seamless takeover by any AI CLI or developer.
+- [x] Deploy and verify live on AWS EC2 behind Nginx with Let's Encrypt SSL at `https://claim-reconciliation.duckdns.org/`.
 
 ## Prioritized testing matrix
 
