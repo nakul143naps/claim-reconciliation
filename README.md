@@ -1,4 +1,4 @@
-# Stitch Financial — Claim Reconciliation Engine
+Claim Reconciliation Engine
 
 [![Live Demo on AWS](https://img.shields.io/badge/Live_Demo-AWS_EC2_Deployed-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](http://67.202.41.44)
 [![Tests Passing](https://img.shields.io/badge/Tests-38%2F38_Passing-10b981?style=for-the-badge&logo=pytest)](https://github.com/nakul143naps/claim-reconciliation)
