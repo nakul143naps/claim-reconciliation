@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { X, CheckCircle, Send, Building, Mail, User, Phone, FileSpreadsheet } from 'lucide-react';
+import { api } from '../api/client';
+import { X, CheckCircle, Send, Building, Mail, User, Phone, FileSpreadsheet, AlertCircle } from 'lucide-react';
 
 interface Props {
   isOpen: boolean;
@@ -8,6 +9,8 @@ interface Props {
 
 export const RequestDemoModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     fullName: '',
     workEmail: '',
@@ -19,14 +22,23 @@ export const RequestDemoModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate real SaaS lead intake
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setErrorMessage(null);
+    try {
+      await api.submitDemoRequest(formData);
+      setSubmitted(true);
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Failed to submit demo request. Please check your connection and try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReset = () => {
     setSubmitted(false);
+    setErrorMessage(null);
     onClose();
   };
 
@@ -78,6 +90,24 @@ export const RequestDemoModal: React.FC<Props> = ({ isOpen, onClose }) => {
             </div>
           ) : (
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {errorMessage && (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    padding: '0.65rem 0.85rem',
+                    background: '#fef2f2',
+                    border: '1px solid #fecaca',
+                    borderRadius: 'var(--radius)',
+                    color: '#b91c1c',
+                    fontSize: '0.825rem',
+                  }}
+                >
+                  <AlertCircle size={16} style={{ flexShrink: 0 }} />
+                  <span>{errorMessage}</span>
+                </div>
+              )}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>
@@ -187,12 +217,17 @@ export const RequestDemoModal: React.FC<Props> = ({ isOpen, onClose }) => {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
-                <button type="button" className="btn" onClick={handleReset}>
+                <button type="button" className="btn" onClick={handleReset} disabled={isSubmitting}>
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary" style={{ padding: '0.55rem 1.25rem' }}>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={isSubmitting}
+                  style={{ padding: '0.55rem 1.25rem' }}
+                >
                   <Send size={14} />
-                  <span>Request Product Demo</span>
+                  <span>{isSubmitting ? 'Submitting Request...' : 'Request Product Demo'}</span>
                 </button>
               </div>
 

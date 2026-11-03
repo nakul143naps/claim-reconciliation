@@ -138,17 +138,25 @@ class ImportService:
         )
 
     def _relink_orphan_remittances(self, new_claim_ids: List[str]) -> int:
-        """Auto-link any waiting orphaned remittances whose claim was just imported."""
+        """Auto-link any waiting orphaned remittances whose claim was just imported.
+        
+        Chunks queries into batches of 500 to prevent exceeding SQL parameter limits.
+        """
         if not new_claim_ids:
             return 0
-        waiting = (
-            self.db.query(Remittance)
-            .filter(Remittance.claim_id.is_(None), Remittance.source_claim_id.in_(new_claim_ids))
-            .all()
-        )
-        for remit in waiting:
-            remit.claim_id = remit.source_claim_id
-        return len(waiting)
+        total_relinked = 0
+        chunk_size = 500
+        for i in range(0, len(new_claim_ids), chunk_size):
+            chunk = new_claim_ids[i:i + chunk_size]
+            waiting = (
+                self.db.query(Remittance)
+                .filter(Remittance.claim_id.is_(None), Remittance.source_claim_id.in_(chunk))
+                .all()
+            )
+            for remit in waiting:
+                remit.claim_id = remit.source_claim_id
+            total_relinked += len(waiting)
+        return total_relinked
 
     # -------------------------------------------------------------------------
     # Claims Ingestion

@@ -12,6 +12,7 @@ import {
   Clock,
   Receipt,
   AlertTriangle,
+  UserCheck,
 } from 'lucide-react';
 
 interface Props {
@@ -74,8 +75,8 @@ export const SummaryCards: React.FC<Props> = ({ summary, onFilterStatus, onFilte
     summary.uncollected_cash_cents ??
     Math.max(0, summary.total_billed_cents - summary.matched_paid_cents);
 
-  const adjustments = summary.total_adjustment_cents ?? 14000;
-  const patientResp = summary.total_patient_responsibility_cents ?? 7500;
+  const adjustments = summary.total_adjustment_cents ?? 0;
+  const patientResp = summary.total_patient_responsibility_cents ?? 0;
   const totalWriteOffsAndCopays = adjustments + patientResp;
 
   const netUnsettled =
@@ -92,9 +93,14 @@ export const SummaryCards: React.FC<Props> = ({ summary, onFilterStatus, onFilte
       ? ((summary.matched_paid_cents / summary.total_billed_cents) * 100).toFixed(1)
       : '0.0';
 
-  const writeOffsPct =
+  const adjustmentsPct =
     summary.total_billed_cents > 0
-      ? ((totalWriteOffsAndCopays / summary.total_billed_cents) * 100).toFixed(1)
+      ? ((adjustments / summary.total_billed_cents) * 100).toFixed(1)
+      : '0.0';
+
+  const patientRespPct =
+    summary.total_billed_cents > 0
+      ? ((patientResp / summary.total_billed_cents) * 100).toFixed(1)
       : '0.0';
 
   const unsettledPct =
@@ -107,10 +113,12 @@ export const SummaryCards: React.FC<Props> = ({ summary, onFilterStatus, onFilte
       <FinancialSettlementProgressBar
         totalBilledCents={summary.total_billed_cents}
         matchedPaidCents={summary.matched_paid_cents}
-        totalWriteOffsAndCopays={totalWriteOffsAndCopays}
+        totalAdjustmentCents={adjustments}
+        totalPatientRespCents={patientResp}
         netUnsettledCents={netUnsettled}
         collectedPct={collectedPct}
-        writeOffsPct={writeOffsPct}
+        adjustmentsPct={adjustmentsPct}
+        patientRespPct={patientRespPct}
         unsettledPct={unsettledPct}
       />
 
@@ -155,12 +163,23 @@ export const SummaryCards: React.FC<Props> = ({ summary, onFilterStatus, onFilte
         />
 
         <KpiCardItem
-          label="Adjustments & Copays"
+          label="Contractual Adjustments"
           icon={<Receipt size={16} />}
-          value={formatCurrency(totalWriteOffsAndCopays)}
-          subtext={`${formatCurrency(adjustments)} write-offs · ${formatCurrency(patientResp)} copays`}
+          value={formatCurrency(adjustments)}
+          subtext={`Payer fee write-offs (${adjustmentsPct}%)`}
           labelColor="#2563eb"
           valueColor="#2563eb"
+          title="Contractual write-offs discounted by payer agreement (CO-*)"
+        />
+
+        <KpiCardItem
+          label="Patient Responsibility"
+          icon={<UserCheck size={16} />}
+          value={formatCurrency(patientResp)}
+          subtext={`Copays & deductibles (${patientRespPct}%)`}
+          labelColor="#7c3aed"
+          valueColor="#7c3aed"
+          title="Patient balance owed for copay, coinsurance, and deductibles (PR-*)"
         />
 
         <KpiCardItem
@@ -185,7 +204,7 @@ export const SummaryCards: React.FC<Props> = ({ summary, onFilterStatus, onFilte
           label="Unbalanced Claims"
           icon={<AlertOctagon size={16} />}
           value={summary.unbalanced_claims}
-          subtext="5 underpaid · 1 overpaid"
+          subtext={`${summary.unbalanced_claims} claim${summary.unbalanced_claims === 1 ? '' : 's'} with variance`}
           labelColor="var(--warning)"
           valueColor="var(--warning)"
           onClick={() => onFilterStatus && onFilterStatus('unbalanced')}
@@ -196,7 +215,7 @@ export const SummaryCards: React.FC<Props> = ({ summary, onFilterStatus, onFilte
           label="No Remittance"
           icon={<HelpCircle size={16} />}
           value={summary.claims_without_remittance}
-          subtext="Pending payer adjudication ($60.00)"
+          subtext="Pending payer adjudication"
           labelColor="#64748b"
           onClick={() => onFilterStatus && onFilterStatus('no_remittance')}
           title="Filter by Claims Awaiting Remittance"
@@ -206,7 +225,7 @@ export const SummaryCards: React.FC<Props> = ({ summary, onFilterStatus, onFilte
           label="Unmatched Cash"
           icon={<HelpCircle size={16} />}
           value={formatCurrency(summary.unmatched_remittance_paid_cents)}
-          subtext={`${summary.unmatched_remittance_count} orphaned remittance (e.g. C9999)`}
+          subtext={`${summary.unmatched_remittance_count} orphaned remittance${summary.unmatched_remittance_count === 1 ? '' : 's'}`}
           labelColor="#d97706"
           valueColor="#d97706"
           onClick={onNavigateUnmatched}
@@ -225,14 +244,14 @@ export const SummaryCards: React.FC<Props> = ({ summary, onFilterStatus, onFilte
         />
 
         <KpiCardItem
-          label="Overpayment Flag"
+          label="Review Flags"
           icon={<AlertTriangle size={16} />}
           value={summary.claims_flagged_for_review}
-          subtext="Payment > Billed charges (C1006)"
+          subtext="Payment > Billed or payer mismatch"
           labelColor="#ea580c"
           valueColor="#ea580c"
           onClick={() => onFilterFlag && onFilterFlag('payment_exceeds_billed')}
-          title="Click to filter claims where payment exceeds billed charges"
+          title="Click to filter claims flagged for review"
         />
       </div>
     </div>

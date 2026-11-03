@@ -300,21 +300,73 @@ class ClaimRepository:
             for r in records
         ]
 
-    def get_all_claims_for_export(self) -> List[Claim]:
-        """Fetch all claims eagerly loaded for audit file generation."""
-        return (
-            self.db.query(Claim)
-            .options(selectinload(Claim.remittances))
-            .order_by(Claim.claim_id.asc())
-            .all()
-        )
+    def get_distinct_payers(self) -> List[str]:
+        """Fetch unique sorted list of payers across claims."""
+        results = self.db.query(Claim.payer).distinct().order_by(Claim.payer.asc()).all()
+        payers = [r[0] for r in results if r[0]]
+        return payers or ["Northwind Health", "Cedar Mutual", "Harbor Plan"]
 
-    def export_reconciliation_csv(self) -> str:
-        """Generate complete reconciliation audit ledger as CSV formatted string."""
-        claims = self.get_all_claims_for_export()
+    def get_all_claims_for_export(
+        self,
+        payer: Optional[str] = None,
+        status: Optional[str] = None,
+        claim_id: Optional[str] = None,
+        flag: Optional[str] = None,
+    ) -> List[Claim]:
+        """Fetch claims eagerly loaded for audit file generation, with optional filtering."""
+        query = self.db.query(Claim).options(selectinload(Claim.remittances))
+
+        if claim_id:
+            search_term = f"%{claim_id.strip()}%"
+            query = query.filter(
+                Claim.claim_id.ilike(search_term) | Claim.patient_account.ilike(search_term)
+            )
+
+        if payer:
+            query = query.filter(func.lower(Claim.payer) == payer.strip().lower())
+
+        query = query.order_by(Claim.claim_id.asc())
+        all_claims = query.all()
+
+        if not status and not flag:
+            return all_claims
+
+        filtered_claims: List[Claim] = []
+        for claim in all_claims:
+            matched_remits = [r for r in claim.remittances if r.claim_id == claim.claim_id]
+            _, claim_status, flags, _ = calculate_claim_reconciliation(
+                billed_cents=claim.billed_cents,
+                matched_remittances=matched_remits,
+                claim_payer=claim.payer,
+            )
+
+            if status and claim_status != status.strip().lower():
+                continue
+            if flag and flag.strip().lower() not in [f.lower() for f in flags]:
+                continue
+
+            filtered_claims.append(claim)
+
+        return filtered_claims
+
+    def export_reconciliation_csv(
+        self,
+        payer: Optional[str] = None,
+        status: Optional[str] = None,
+        claim_id: Optional[str] = None,
+        flag: Optional[str] = None,
+    ) -> str:
+        """Generate reconciliation audit ledger as CSV formatted string."""
+        claims = self.get_all_claims_for_export(payer=payer, status=status, claim_id=claim_id, flag=flag)
         return generate_reconciliation_csv(claims)
 
-    def export_reconciliation_json(self) -> str:
-        """Generate complete reconciliation audit ledger as formatted JSON string."""
-        claims = self.get_all_claims_for_export()
+    def export_reconciliation_json(
+        self,
+        payer: Optional[str] = None,
+        status: Optional[str] = None,
+        claim_id: Optional[str] = None,
+        flag: Optional[str] = None,
+    ) -> str:
+        """Generate reconciliation audit ledger as formatted JSON string."""
+        claims = self.get_all_claims_for_export(payer=payer, status=status, claim_id=claim_id, flag=flag)
         return generate_reconciliation_json(claims)

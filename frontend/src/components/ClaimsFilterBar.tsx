@@ -36,7 +36,24 @@ export const ClaimsFilterBar: React.FC<Props> = ({
   onOpenImportModal,
 }) => {
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
+  const [availablePayers, setAvailablePayers] = useState<string[]>([
+    'Northwind Health',
+    'Cedar Mutual',
+    'Harbor Plan',
+  ]);
   const exportDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    api.getPayers()
+      .then((data) => {
+        if (data && data.length > 0) {
+          setAvailablePayers(data);
+        }
+      })
+      .catch(() => {
+        // Fallback silently to initial defaults
+      });
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -50,12 +67,30 @@ export const ClaimsFilterBar: React.FC<Props> = ({
 
   const handleExportCsv = () => {
     setIsExportMenuOpen(false);
-    window.open(api.getExportUrl('csv'), '_blank');
+    window.open(
+      api.getExportUrl({
+        format: 'csv',
+        payer: payerFilter || undefined,
+        status: statusFilter || undefined,
+        claim_id: claimIdFilter || undefined,
+        flag: flagFilter || undefined,
+      }),
+      '_blank'
+    );
   };
 
   const handleExportJson = () => {
     setIsExportMenuOpen(false);
-    window.open(api.getExportUrl('json'), '_blank');
+    window.open(
+      api.getExportUrl({
+        format: 'json',
+        payer: payerFilter || undefined,
+        status: statusFilter || undefined,
+        claim_id: claimIdFilter || undefined,
+        flag: flagFilter || undefined,
+      }),
+      '_blank'
+    );
   };
 
   const handlePrintPdf = () => {
@@ -87,9 +122,11 @@ export const ClaimsFilterBar: React.FC<Props> = ({
           style={{ height: '32px', fontSize: '0.825rem', padding: '0.2rem 0.5rem' }}
         >
           <option value="">All Payers</option>
-          <option value="Northwind Health">Northwind Health</option>
-          <option value="Cedar Mutual">Cedar Mutual</option>
-          <option value="Harbor Plan">Harbor Plan</option>
+          {availablePayers.map((p) => (
+            <option key={p} value={p}>
+              {p}
+            </option>
+          ))}
         </select>
 
         {/* Status Filter */}

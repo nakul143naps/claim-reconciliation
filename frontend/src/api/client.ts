@@ -119,11 +119,48 @@ export const api = {
     const qs = query.toString();
     return request<ClaimListResponse>(`/claims${qs ? `?${qs}` : ''}`);
   },
-  getExportUrl: (format: 'csv' | 'json' = 'csv') => `${API_BASE}/claims/export?format=${format}`,
+  getPayers: () => request<string[]>('/claims/payers'),
+  getExportUrl: (params?: {
+    format?: 'csv' | 'json';
+    payer?: string;
+    status?: string;
+    claim_id?: string;
+    flag?: string;
+  }) => {
+    const query = new URLSearchParams();
+    query.set('format', params?.format || 'csv');
+    if (params?.payer) query.set('payer', params.payer);
+    if (params?.status) query.set('status', params.status);
+    if (params?.claim_id) query.set('claim_id', params.claim_id);
+    if (params?.flag) query.set('flag', params.flag);
+    return `${API_BASE}/claims/export?${query.toString()}`;
+  },
   getClaimById: (claimId: string) => request<ClaimDetail>(`/claims/${encodeURIComponent(claimId)}`),
   getUnmatchedRemittances: () => request<UnmatchedRemittancesResponse>('/remittances/unmatched'),
   importClaims: (file: File) => uploadFile<FileImportResult>('/import/claims', file),
   importRemittances: (file: File) => uploadFile<FileImportResult>('/import/remittances', file),
-  resetBenchmark: () => request<FullImportReport>('/import/reset', { method: 'POST', headers: { 'X-Admin-Key': 'reconcile-admin-secret-2026' } }),
+  resetBenchmark: (adminKey?: string) => request<FullImportReport>('/import/reset', {
+    method: 'POST',
+    headers: { 'X-Admin-Key': adminKey || (import.meta as any).env?.VITE_ADMIN_API_KEY || 'reconcile-admin-secret-2026' },
+  }),
+  submitDemoRequest: (data: {
+    fullName: string;
+    workEmail: string;
+    organization?: string;
+    phone?: string;
+    claimVolume?: string;
+    notes?: string;
+  }) => request<{ success: boolean; message: string; id: number }>('/demo/request', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      full_name: data.fullName,
+      work_email: data.workEmail,
+      organization: data.organization || null,
+      phone: data.phone || null,
+      claim_volume: data.claimVolume || null,
+      notes: data.notes || null,
+    }),
+  }),
   getTemplateUrl: (type: 'claims' | 'remittances') => `${API_BASE}/import/templates/${type}`,
 };

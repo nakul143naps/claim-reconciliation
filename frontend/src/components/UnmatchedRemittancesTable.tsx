@@ -21,7 +21,7 @@ export const UnmatchedRemittancesTable: React.FC<Props> = ({ items, isLoading })
           <strong>Audit Principle:</strong> These remittances reference claim IDs that do not exist in clinic records (e.g. <span className="font-mono" style={{ fontWeight: 600 }}>C9999</span>). The system safely preserves the source reference while setting the foreign key to <span className="font-mono">NULL</span>.
         </p>
         <p style={{ marginTop: '0.4rem', fontSize: '0.8rem', color: '#b45309' }}>
-          Notice: Their cash is included in <em>all-remittance totals</em> ($1,040.00), but strictly isolated from matched-claim totals ($990.00) so claim differences are not contaminated.
+          Notice: Their cash is accounted for in all-remittance totals, but strictly isolated from matched-claim balances so claim differences are not contaminated.
         </p>
       </div>
 

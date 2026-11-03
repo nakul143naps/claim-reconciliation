@@ -1,14 +1,17 @@
 """Database models for claims and remittances."""
 
-from datetime import date
+from datetime import date, datetime, timezone
 from typing import List, Optional
 from sqlalchemy import (
     BigInteger,
     CheckConstraint,
     Date,
+    DateTime,
     ForeignKey,
     Index,
+    Integer,
     String,
+    Text,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -82,3 +85,25 @@ class Remittance(Base):
             f"<Remittance remit_id={self.remit_id!r} claim_id={self.claim_id!r} "
             f"paid_cents={self.paid_cents}>"
         )
+
+
+class DemoRequest(Base):
+    """Represents a prospective customer demo request / lead."""
+
+    __tablename__ = "demo_requests"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    full_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    work_email: Mapped[str] = mapped_column(String(150), nullable=False, index=True)
+    organization: Mapped[Optional[str]] = mapped_column(String(150), nullable=True)
+    phone: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    claim_volume: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+
+    def __repr__(self) -> str:
+        return f"<DemoRequest id={self.id} name={self.full_name!r} email={self.work_email!r}>"

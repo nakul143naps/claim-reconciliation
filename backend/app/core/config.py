@@ -1,8 +1,12 @@
 """Application configuration management using Pydantic Settings."""
 
+from pathlib import Path
 from typing import List
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+_BACKEND_DIR = Path(__file__).resolve().parents[2]
+_ROOT_DIR = Path(__file__).resolve().parents[3]
 
 
 class Settings(BaseSettings):
@@ -32,7 +36,7 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = Field(default="development", description="Application environment")
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=(str(_ROOT_DIR / ".env"), str(_BACKEND_DIR / ".env"), ".env"),
         env_file_encoding="utf-8",
         extra="ignore",
     )

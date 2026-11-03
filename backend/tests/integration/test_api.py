@@ -275,3 +275,23 @@ def test_claim_deletion_preserves_remittances(db_session: Session, import_servic
     assert preserved.source_claim_id == "C1001"
 
 
+def test_claims_payers_list(client: TestClient):
+    """GET /api/claims/payers returns distinct sorted list of payers."""
+    response = client.get("/api/claims/payers")
+    assert response.status_code == 200
+    payers = response.json()
+    assert "Cedar Mutual" in payers
+    assert "Harbor Plan" in payers
+    assert "Northwind Health" in payers
+
+
+def test_claims_export_csv_filtered(client: TestClient):
+    """GET /api/claims/export?status=unbalanced exports only filtered claims."""
+    response = client.get("/api/claims/export?status=unbalanced")
+    assert response.status_code == 200
+    lines = response.text.strip().split("\n")
+    # 1 header + 6 unbalanced claims
+    assert len(lines) == 7
+
+
+

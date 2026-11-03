@@ -1,7 +1,7 @@
 """Claims endpoints for listing, filtering, and detail inspection."""
 
 from enum import Enum
-from typing import Optional
+from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy.orm import Session
 
@@ -63,17 +63,43 @@ def list_claims(
     )
 
 
+@router.get("/payers", response_model=List[str])
+def list_payers(db: Session = Depends(get_db)) -> List[str]:
+    """Retrieve distinct list of payers currently present in claims records."""
+    repo = ClaimRepository(db)
+    return repo.get_distinct_payers()
+
+
 @router.get("/export", response_class=Response)
 def export_claims(
     export_format: str = Query(default="csv", alias="format", description="Export format: 'csv' or 'json'"),
+    payer: Optional[str] = Query(default=None, description="Filter by payer"),
+    status_filter: Optional[ClaimStatusFilter] = Query(
+        default=None,
+        alias="status",
+        description="Filter by reconciliation status",
+    ),
+    flag_filter: Optional[ClaimFlagFilter] = Query(
+        default=None,
+        alias="flag",
+        description="Filter by operational flag",
+    ),
+    claim_id: Optional[str] = Query(default=None, description="Search term for claim ID or patient account"),
     db: Session = Depends(get_db),
 ):
-    """Export complete reconciliation audit ledger in requested format (CSV or JSON)."""
+    """Export reconciliation audit ledger in requested format (CSV or JSON), optionally filtered."""
     repo = ClaimRepository(db)
     clean_format = export_format.strip().lower()
+    status_str = status_filter.value if status_filter else None
+    flag_str = flag_filter.value if flag_filter else None
 
     if clean_format == "json":
-        json_data = repo.export_reconciliation_json()
+        json_data = repo.export_reconciliation_json(
+            payer=payer,
+            status=status_str,
+            claim_id=claim_id,
+            flag=flag_str,
+        )
         return Response(
             content=json_data,
             media_type="application/json",
@@ -81,7 +107,12 @@ def export_claims(
         )
 
     # Default to CSV
-    csv_data = repo.export_reconciliation_csv()
+    csv_data = repo.export_reconciliation_csv(
+        payer=payer,
+        status=status_str,
+        claim_id=claim_id,
+        flag=flag_str,
+    )
     return Response(
         content=csv_data,
         media_type="text/csv",

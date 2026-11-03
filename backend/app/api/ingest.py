@@ -47,21 +47,34 @@ SAMPLE_REMITTANCES_TEMPLATE = (
 
 
 async def _read_csv_upload(file: UploadFile) -> str:
-    """Validate extension, enforce file size limits, and decode uploaded file bytes to UTF-8 text."""
-    if not file.filename.lower().endswith(".csv"):
+    """Validate extension, enforce file size limits in chunks, and decode uploaded file bytes to UTF-8 text."""
+    filename = file.filename or ""
+    if not filename.lower().endswith(".csv"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={"code": "INVALID_FILE_TYPE", "message": "Only .csv files are supported"},
         )
-    content_bytes = await file.read()
-    if len(content_bytes) > MAX_UPLOAD_BYTES:
-        raise HTTPException(
-            status_code=413,
-            detail={
-                "code": "FILE_TOO_LARGE",
-                "message": f"Uploaded file exceeds the maximum allowed size of {MAX_UPLOAD_BYTES // (1024 * 1024)} MB",
-            },
-        )
+
+    chunks = []
+    total_bytes = 0
+    chunk_size = 64 * 1024  # 64 KB read buffer
+
+    while True:
+        chunk = await file.read(chunk_size)
+        if not chunk:
+            break
+        total_bytes += len(chunk)
+        if total_bytes > MAX_UPLOAD_BYTES:
+            raise HTTPException(
+                status_code=413,
+                detail={
+                    "code": "FILE_TOO_LARGE",
+                    "message": f"Uploaded file exceeds the maximum allowed size of {MAX_UPLOAD_BYTES // (1024 * 1024)} MB",
+                },
+            )
+        chunks.append(chunk)
+
+    content_bytes = b"".join(chunks)
     try:
         return content_bytes.decode("utf-8-sig")
     except UnicodeDecodeError:
