@@ -241,7 +241,7 @@ pytest -v
 ## 8. AWS Cloud Deployment Architecture
 
 The platform is deployed live on **Amazon Web Services (AWS)** at:  
-👉 **[https://claim-reconciliation.duckdns.org/:3000](https://claim-reconciliation.duckdns.org/:3000)**
+👉 **[https://claim-reconciliation.duckdns.org/](https://claim-reconciliation.duckdns.org/)**
 
 ### 8.1 Cloud Infrastructure Specifications
 * **Cloud Provider**: Amazon Web Services (AWS)
