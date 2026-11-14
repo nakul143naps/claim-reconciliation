@@ -170,7 +170,7 @@ No public upload API in v1; use controlled import script.
 - **Tests actually run and result:** 38/38 automated tests passed in 2.49s. Frontend production bundle built cleanly in 2.74s. OpenAPI schema 100% matched before and after.
 - **Decisions made:**
   - Intentionally preserved `reconciliation.py` as pure calculation functions (already minimal and idiomatic).
-  - Maintained exact visual layout, Tailwind utility classes, and user workflow.
+  - Maintained exact visual layout, accessible high-contrast CSS styling, and user workflow.
   - Attributed all commits to `Nakul Kothlapur <nakulnaps095@gmail.com>`.
 - **Known issues / blockers:** None. Ready for interview review and defense.
 

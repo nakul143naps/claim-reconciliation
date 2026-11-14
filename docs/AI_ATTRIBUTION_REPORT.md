@@ -42,7 +42,7 @@ My philosophy throughout the build was simple:
     - A **Denial Appeal Playbook** that gives billing teams actionable appeal steps for denial codes (`CO-16`, `CO-50`, `CO-197`).
     - An interactive **Financial Settlement Progress Bar** showing cash collected vs. write-offs vs. unpaid balance.
 * **How AI Assisted**:
-  - AI helped scaffold the React TypeScript components, Lucide icons, and Tailwind CSS styling based on the design concepts and layouts I described.
+  - AI helped scaffold the React TypeScript components, Lucide icons, and custom responsive CSS styling (`frontend/src/index.css`) based on the design concepts, color palettes, and layouts I described.
 
 ---
 
@@ -95,6 +95,11 @@ Throughout the project, I actively reviewed the AI's suggestions and corrected i
 ## 4. Verification & Testing
 
 I verified the entire platform using a comprehensive test strategy:
-- **38 Automated Pytest Tests**: 14 unit calculation tests, 10 CSV import tests, 10 API integration tests, and 4 scale benchmark tests.
+- **49 Automated Pytest Tests (100% Pass Rate)**:
+  - 8 unit reconciliation tests (`test_reconciliation.py`)
+  - 11 unit CSV import & validation tests (`test_import.py`)
+  - 22 API integration & security tests (`test_api.py`)
+  - 5 scale benchmark & pagination tests (`test_scale.py`)
+  - 3 customer demo request & lead intake tests (`test_demo.py`)
 - **Frontend Verification**: Clean `npm run build` with 0 TypeScript errors.
 - **Database Parity**: Verified that all financial calculations strictly match the assignment's benchmark values.

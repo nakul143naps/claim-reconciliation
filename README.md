@@ -1,7 +1,7 @@
 # Claims Reconciliation System
 
 [![Live Demo on AWS](https://img.shields.io/badge/Live_Demo-HTTPS_Production-0284c7?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://claim-reconciliation.duckdns.org/)
-[![Tests Passing](https://img.shields.io/badge/Tests-44%2F44_Passing-10b981?style=for-the-badge&logo=pytest)](https://github.com/nakul143naps/claim-reconciliation)
+[![Tests Passing](https://img.shields.io/badge/Tests-49%2F49_Passing-10b981?style=for-the-badge&logo=pytest)](https://github.com/nakul143naps/claim-reconciliation)
 [![MySQL 8.0](https://img.shields.io/badge/Database-MySQL_8.0_Docker-f59e0b?style=for-the-badge&logo=mysql)](https://github.com/nakul143naps/claim-reconciliation)
 
 > 🌐 **Live AWS EC2 Deployment**: [https://claim-reconciliation.duckdns.org/](https://claim-reconciliation.duckdns.org/)  
@@ -92,7 +92,7 @@ When a payer sends payment for an unknown claim (e.g. remit `R1012` referencing 
 * **Backend**: Python 3.13, FastAPI, SQLAlchemy 2.0, Pydantic v2, PyMySQL, Cryptography, python-multipart.
 * **Database**: MySQL 8.0 (Dockerized container `claim_reconciliation_db`) with persistent volumes and healthcheck; SQLite with `StaticPool` for fast in-memory testing.
 * **Frontend**: React 18, TypeScript, Vite, Lucide Icons, Accessible High-Contrast CSS.
-* **Testing**: Pytest, FastAPI TestClient, HTTPX (44 automated unit, integration, and scale tests).
+* **Testing**: Pytest, FastAPI TestClient, HTTPX (49 automated unit, integration, scale, and lead intake tests).
 
 ---
 
@@ -168,30 +168,52 @@ docker ps
 ```
 
 ### Step 2: Set Up Backend
-```bash
-# Navigate to backend directory
-cd backend
 
+You can run the backend from either the **project root** (standard full-stack setup) or from inside the **`backend/`** directory:
+
+**Option A — From Project Root (Recommended):**
+```bash
 # Create and activate virtual environment
-python -m venv .venv
+python -m venv backend/.venv
 
 # Windows:
-.venv\Scripts\activate
+backend\.venv\Scripts\activate
 # Linux/macOS:
-# source .venv/bin/activate
+source backend/.venv/bin/activate
 
 # Install dependencies
-pip install -r requirements.txt
+pip install -r backend/requirements.txt
 
 # Run database import script (seeds benchmark 12 claims / 13 remittances)
 python -m backend.app.scripts.import_data
 ```
 
-### Step 3: Run Backend API Server
+**Option B — From `backend/` Directory:**
 ```bash
-# From project root with .venv activated:
+cd backend
+python -m venv .venv
+
+# Windows:
+.venv\Scripts\activate
+# Linux/macOS:
+source .venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run database import script (seeds benchmark 12 claims / 13 remittances)
+python -m app.scripts.import_data
+# (or directly: python app/scripts/import_data.py)
+```
+
+### Step 3: Run Backend API Server
+
+**From project root:**
+```bash
 uvicorn backend.app.main:app --reload --port 8000
 ```
+*(Or if inside `backend/`: `uvicorn app.main:app --reload --port 8000`)*
+
 * Interactive API Documentation (Swagger): [http://localhost:8000/docs](http://localhost:8000/docs)
 * Health Check: [http://localhost:8000/api/health](http://localhost:8000/api/health)
 
@@ -207,7 +229,7 @@ Open your browser at: [http://localhost:3000](http://localhost:3000)
 
 ## 7. Automated Testing
 
-The project includes **44 automated unit, integration, and scale tests** covering calculation formulas, duplicate handling, schema validation, HTTP error codes, orphan quarantine, and 50-claim pagination invariants.
+The project includes **49 automated unit, integration, and scale tests** covering calculation formulas, duplicate handling, schema validation, HTTP error codes, orphan quarantine, 50-claim pagination invariants, and customer demo intake.
 
 ```bash
 # Run full test suite from project root:
