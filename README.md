@@ -110,7 +110,7 @@ When a payer sends payment for an unknown claim (e.g. remit `R1012` referencing 
 ## 5. Repository Structure
 
 ```text
-claim_reconciliation_docs/
+claim-reconciliation/
 ├── backend/
 │   ├── app/
 │   │   ├── api/             # HTTP endpoints (/health, /summary, /claims, /remittances)

@@ -134,7 +134,7 @@ Target: 2–3 focused days before the November 2, 2026 submission deadline. The 
 - [x] Issue 2.6: Normalize CSV column headers (strip whitespace, detect duplicates).
 - [x] Issue 2.7: Strict ISO-8601 date validation regex (`^\d{4}-\d{2}-\d{2}$`).
 - [x] Issue 3.1: Adjust ORM cascade (`cascade="save-update, merge"`) to preserve remittances on claim deletion.
-- [x] Expand automated tests from 38 to 44 tests (100% pass rate).
+- [x] Expand automated tests to 49 tests (100% pass rate).
 
 ## Day 5 — Brand Neutralization, UX Separation & Operational Handoff
 
